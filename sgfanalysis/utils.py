@@ -1,4 +1,5 @@
 import itertools, re
+
 from sgfmill import sgf
 
 property2key = {'PC':'url', 'DT':'date', 'PB':'bname', 'PW':'wname', 'BR':'brank', 'WR':'wrank',
