@@ -36,8 +36,13 @@ def get_metadata(game):
         except (KeyError, ValueError):
             metadata[value] = None
     metadata['url'] = metadata['url'][5:]
+    metadata['game_id'] = metadata['url'].split("/")[-1]
     metadata['num_moves'] = len(game.get_main_sequence()) - 1
     game_type, ranked = metadata['game_type'].split(",")
     metadata['game_type'] = game_type
     metadata['ranked'] = (ranked == "ranked")
+    metadata['winner'] = metadata['result'][0]
+    if metadata['winner'] not in ['B', 'W']:
+        metadata['winner'] = None
+        
     return metadata

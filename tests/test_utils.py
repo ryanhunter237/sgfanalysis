@@ -1,6 +1,7 @@
-import os, unittest
+import json, os, unittest
 
 from sgfanalysis import utils
+from sgfmill import sgf
 
 class TestFixingHandicapGameStrings(unittest.TestCase):
     def get_sgf_str(self, filename):
@@ -20,9 +21,28 @@ class TestFixingHandicapGameStrings(unittest.TestCase):
         fixed_game_str = utils.fix_handicap_game_string(game_str)
         self.assertEqual(correct_game_str, fixed_game_str)
 
-    def test_correct_NINE_handicap(self):
+    def test_correct_nine_handicap(self):
         self.maxDiff = None
         game_str = self.get_sgf_str('handicap9_error.sgf')
         correct_game_str = self.get_sgf_str('handicap9_corrected.sgf')
         fixed_game_str = utils.fix_handicap_game_string(game_str)
         self.assertEqual(correct_game_str, fixed_game_str)
+
+class TestGetMetadata(unittest.TestCase):
+    def get_sgf_str(self, filename):
+        with open(os.path.join('tests', 'files', filename), encoding='utf-8') as f:
+            game_str = f.read()
+        return game_str
+
+    def test_no_handicap_metadata(self):
+        game_str = self.get_sgf_str('full_game_no_handicap.sgf')
+        game = sgf.Sgf_game.from_string(game_str)
+        metadata = utils.get_metadata(game)
+
+        metadata_file = "full_game_no_handicap_metadata.json"
+        with open(os.path.join('tests', 'files', metadata_file), encoding='utf-8') as f:
+            check_metadata = json.load(f)
+        
+        self.assertEqual(metadata, check_metadata)
+        #for key, value in metadata.items():
+        #    print(f"{key} {value}")
