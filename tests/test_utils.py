@@ -29,13 +29,8 @@ class TestFixingHandicapGameStrings(unittest.TestCase):
         self.assertEqual(correct_game_str, fixed_game_str)
 
 class TestGetMetadata(unittest.TestCase):
-    def get_sgf_str(self, filename):
-        with open(os.path.join('tests', 'files', filename), encoding='utf-8') as f:
-            game_str = f.read()
-        return game_str
-
     def test_no_handicap_metadata(self):
-        game_str = self.get_sgf_str('full_game_no_handicap.sgf')
+        game_str = utils.get_game_string(os.path.join('tests', 'files', 'full_game_no_handicap.sgf'))
         game = sgf.Sgf_game.from_string(game_str)
         metadata = utils.get_metadata(game)
 
@@ -44,5 +39,14 @@ class TestGetMetadata(unittest.TestCase):
             check_metadata = json.load(f)
         
         self.assertEqual(metadata, check_metadata)
-        #for key, value in metadata.items():
-        #    print(f"{key} {value}")
+
+    def test_one_handicap_metadata(self):
+        game_str = utils.get_game_string(os.path.join('tests', 'files', 'full_game_one_handicap.sgf'))
+        game = sgf.Sgf_game.from_string(game_str)
+        metadata = utils.get_metadata(game)
+
+        metadata_file = "full_game_one_handicap_metadata.json"
+        with open(os.path.join('tests', 'files', metadata_file), encoding='utf-8') as f:
+            check_metadata = json.load(f)
+
+        self.assertEqual(metadata, check_metadata)
