@@ -50,3 +50,14 @@ class TestGetMetadata(unittest.TestCase):
             check_metadata = json.load(f)
 
         self.assertEqual(metadata, check_metadata)
+
+    def test_five_handicap_metadata(self):
+        game_str = utils.get_game_string(os.path.join('tests', 'files', 'full_game_five_handicap.sgf'))
+        game = sgf.Sgf_game.from_string(game_str)
+        metadata = utils.get_metadata(game)
+
+        metadata_file = "full_game_five_handicap_metadata.json"
+        with open(os.path.join('tests', 'files', metadata_file), encoding='utf-8') as f:
+            check_metadata = json.load(f)
+
+        self.assertEqual(metadata, check_metadata)
