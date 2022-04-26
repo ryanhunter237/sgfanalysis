@@ -61,3 +61,22 @@ class TestGetMetadata(unittest.TestCase):
             check_metadata = json.load(f)
 
         self.assertEqual(metadata, check_metadata)
+
+class TestEmptyTriangles(unittest.TestCase):
+    def test_no_handicap_empty_triangles(self):
+        game_str = utils.get_game_string(os.path.join('tests', 'files', 'full_game_no_handicap.sgf'))
+        game = sgf.Sgf_game.from_string(game_str)
+        empty_triangles = utils.get_empty_triangles(game)
+
+        empty_triangles_file = 'full_game_no_handicap_empty_triangles.json'
+        with open(os.path.join('tests', 'files', empty_triangles_file), encoding='utf-8') as f:
+            check_empty_triangles = json.load(f)
+
+        self.assertEqual(empty_triangles, check_empty_triangles)
+
+    def test__honeandicap_empty_triangles(self):
+        game_str = utils.get_game_string(os.path.join('tests', 'files', 'full_game_one_handicap.sgf'))
+        game = sgf.Sgf_game.from_string(game_str)
+        empty_triangles = utils.get_empty_triangles(game)
+        print(empty_triangles)
+    

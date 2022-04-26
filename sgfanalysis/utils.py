@@ -1,6 +1,7 @@
+from collections import Counter
 import itertools, re
 
-from sgfmill import sgf
+from sgfmill import sgf_moves
 
 property2key = {'PC':'url', 'DT':'date', 'PB':'bname', 'PW':'wname', 'BR':'brank', 'WR':'wrank',
                 'TM':'main_time', 'OT':'overtime', 'RE':'result', 'SZ':'size', 'HA':'handicap', 
@@ -46,3 +47,29 @@ def get_metadata(game):
         metadata['winner'] = None
         
     return metadata
+
+def get_empty_triangles(game):
+    board, plays = sgf_moves.get_setup_and_moves(game)
+    empty_triangles = []
+    for move_num, (color, move) in enumerate(plays):
+        if move is None:
+            continue
+        row, col = move
+        try:
+            board.play(row, col, color)
+        except ValueError:
+            raise Exception("illegal move in sgf file")
+        if is_empty_triangle(board, row, col, color):
+            empty_triangles.append(move_num+1)
+    return empty_triangles
+    
+# should a move be considered an empty triangle if a stone is captured in the process?
+def is_empty_triangle(board, row, col, color):
+    for row_delta, col_delta in itertools.product([-1,1], [-1,1]):
+        if (0 <= row+row_delta < board.side) and (0 <= col+col_delta < board.side):
+            counts = Counter(
+                board.get(row+row_delta*i, col+col_delta*j)
+                for i,j in itertools.product([0,1], [0,1]))
+            if counts[color] == 3 and counts[None] == 1:
+                return True
+    return False
