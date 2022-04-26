@@ -95,6 +95,26 @@ def get_empty_triangles(game: sgf.Sgf_game) -> typing.List[int]:
         if is_empty_triangle(board, row, col, color):
             empty_triangles.append(move_num+1)
     return empty_triangles
+
+def get_empty_triangles_by_color(game: sgf.Sgf_game) -> typing.Dict[str, typing.List[int]]:
+    """
+    Args:
+        game (sgf.Sgf_game): The sgf game
+
+    Returns: 
+        Dictionary with keys 'b' and 'w' and values the list of move numbers for each player
+        which create empty triangles
+    """
+    board, plays = sgf_moves.get_setup_and_moves(game)
+    empty_triangles = {'b':[], 'w':[]}
+    for move_num, (color, move) in enumerate(plays):
+        if move is None:
+            continue
+        row, col = move
+        board.play(row, col, color)
+        if is_empty_triangle(board, row, col, color):
+            empty_triangles[color].append(move_num+1)
+    return empty_triangles
     
 # should a move be considered an empty triangle if a stone is captured in the process?
 def is_empty_triangle(board: boards.Board, row: int, col: int, color: str) -> bool:
