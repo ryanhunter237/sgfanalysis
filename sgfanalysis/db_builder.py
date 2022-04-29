@@ -69,7 +69,7 @@ def update_games_table(con: sqlite3.Connection, sgf_paths: typing.List[str], min
             continue
         try:
             metadata = utils.get_metadata(game)
-        except ValueError:
+        except TypeError:
             continue
         if metadata['num_moves'] < min_moves:
             continue
