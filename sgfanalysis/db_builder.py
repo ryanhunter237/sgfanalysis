@@ -67,7 +67,10 @@ def update_games_table(con: sqlite3.Connection, sgf_paths: typing.List[str], min
             game = sgf.Sgf_game.from_string(game_str)
         except ValueError:
             continue
-        metadata = utils.get_metadata(game)
+        try:
+            metadata = utils.get_metadata(game)
+        except ValueError:
+            continue
         if metadata['num_moves'] < min_moves:
             continue
         metadata['filename'] = os.path.split(path)[-1]
